@@ -1,7 +1,3 @@
-from selene.support.shared import browser
-from selene import have
-from selene import command
-from demoqa_tests import resource
 from demoqa_tests.model.pages.registration_page import RegistrationPage
 
 
