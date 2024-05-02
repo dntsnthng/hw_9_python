@@ -10,8 +10,6 @@ class RegistrationPage:
         self.last_name = browser.element('#lastName')
         self.state = browser.element('#state')
 
-
-
     def open(self):
         browser.open('/automation-practice-form')
         browser.all('[id^=google_ads][id$=container__]').with_(timeout=10).wait_until(
@@ -27,6 +25,7 @@ class RegistrationPage:
     def fill_last_name(self, value):
         self.last_name.type(value)
         return self
+
     def fill_email(self, value):
         browser.element('#userEmail').type(value)
         return self
@@ -35,10 +34,15 @@ class RegistrationPage:
         browser.element('#dateOfBirthInput').click()
         browser.element('.react-datepicker__month-select').type(month)
         browser.element('.react-datepicker__year-select').type(year)
-        browser.element(
-            f'.react-datepicker__day--0{day}:not(.react-datepicker__day--outside-month)'
-        ).click()
+        browser.element(f'.react-datepicker__day--0{day}:not(.react-datepicker__day--outside-month)').click()
         return self
+
+    # def fill_date_of_birth(self, year, month, day):
+    #     browser.element('#dateOfBirthInput').click()
+    #     browser.element('.react-datepicker__month-select').click().element(by.text(month)).click()
+    #     browser.element('.react-datepicker__year-select').click().element(by.text(year)).click()
+    #     browser.element(f'.react-datepicker__day--0{day}').click()
+    #     return self
 
     def fill_state(self, name):
         self.state.perform(command.js.scroll_into_view)
@@ -48,23 +52,24 @@ class RegistrationPage:
         ).click()
         return self
 
-    def should_registered_user_with(self,  user: User):
-        # todo: refactor to reuse parameters
+    def should_have_registered(self, user: User):
+        # self.modal_header.should(have.text("Thanks for submitting the form"))
+
         browser.element('.table').all('td').even.should(
             have.exact_texts(
-                user.name,
+                f'{user.first_name} {user.last_name}',
                 user.email,
                 user.gender,
                 user.number,
-                user.date_of_birth,
+                f'{user.date_of_birth_day} {user.date_of_birth_month},{user.date_of_birth_year}',
                 user.subject,
                 user.hobby,
                 user.photo,
                 user.address,
-                user.city,
-                user.state
+                f'{user.state} {user.city}'
             )
         )
+
         return self
 
     def fill_gender(self, gender: str):
@@ -83,7 +88,7 @@ class RegistrationPage:
         browser.all('.custom-checkbox').element_by(have.exact_text(value)).click()
         return self
 
-    def fill_picture(self,value):
+    def fill_picture(self, value):
         browser.element('#uploadPicture').set_value(resource.path(value))
         return self
 
@@ -101,21 +106,22 @@ class RegistrationPage:
     def submits(self):
         browser.element('#submit').perform(command.js.click)
         return self
-    
+
     def register(self, user: User):
-        self.fill_first_name(user.name).fill_last_name('YA')
+        self.fill_first_name(user.first_name)
+        self.fill_last_name(user.last_name)
         self.fill_email(user.email)
         self.fill_gender(user.gender)
         self.fill_number(user.number)
         self.fill_subject(user.subject)
-        self.fill_date_of_birth('1999', 'May', '11')
+        self.fill_date_of_birth(user.date_of_birth_year, user.date_of_birth_month, user.date_of_birth_day)
         self.fill_hobbies(user.hobby)
-        self.fill_picture('foto.jpg')
-        self.fill_address('Moscowskaya Street 18')
-        self.fill_state('NCR')
-        self.fill_city('Delhi')
+        self.fill_picture(user.photo)
+        self.fill_address(user.address)
+        self.fill_state(user.state)
+        self.fill_city(user.city)
         self.submits()
-        
-        
-        
-        
+
+
+
+
