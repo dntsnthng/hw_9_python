@@ -7,7 +7,7 @@ from selene import Browser, Config
 from utils import attach
 
 
-@pytest.fixture(scope="function", autouse=True)
+@pytest.fixture(scope="function")
 def open_browser():
     browser.config.base_url = 'https://demoqa.com'
     driver_options = webdriver.ChromeOptions()
